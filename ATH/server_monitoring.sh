@@ -1,18 +1,18 @@
 curl -s https://raw.githubusercontent.com/muvik-dev/bash/main/ATH/logo.sh | bash
 if [ -x "$(command -v docker)" ]; then
     echo "Docker already installed"
-    if [[ "$(docker images -q muvikdev/monitoring:latest > /dev/null)" == "" ]]; then
+    if [[ "$(docker images -q muvikdev/monitoring:latest 2> /dev/null)" == "" ]]; then
       echo "-----------------------------------------------------------------------------"
       echo "Image already exist"
       if [ "$( docker container inspect -f '{{.State.Running}}' MONITORING )" == "true" ]; then
         echo "-----------------------------------------------------------------------------"
         echo "Container already running, adding to autostart"
-        docker update --restart=always [MONITORING] &>/dev/null
+        docker update --restart=always MONITORING &>/dev/null
       else
         echo "-----------------------------------------------------------------------------"
         echo "Start container"
         docker start MONITORING &>/dev/null
-        docker update --restart=always [MONITORING] &>/dev/null
+        docker update --restart=always MONITORING &>/dev/null
       fi
     else
       echo "-----------------------------------------------------------------------------"
@@ -26,7 +26,7 @@ if [ -x "$(command -v docker)" ]; then
       if [ "$( docker container inspect -f '{{.State.Running}}' MONITORING )" == "true" ]; then
         echo "-----------------------------------------------------------------------------"
         echo "Container already running, adding to autostart"
-        docker update --restart=always [MONITORING] &>/dev/null
+        docker update --restart=always MONITORING &>/dev/null
       fi
     fi
 else
@@ -40,7 +40,7 @@ else
     sudo apt install docker-ce -y &>/dev/null
     docker pull muvikdev/monitoring:latest &>/dev/null
     docker run -d -p 5678:5678 --name MONITORING muvikdev/monitoring:latest &>/dev/null
-    docker update --restart=always [MONITORING] &>/dev/null
+    docker update --restart=always MONITORING &>/dev/null
 fi
 echo "-----------------------------------------------------------------------------"
 echo "Install completed"

@@ -1,33 +1,20 @@
 curl -s https://raw.githubusercontent.com/muvik-dev/bash/main/ATH/logo.sh | bash
 if [ -x "$(command -v docker)" ]; then
     echo "Docker already installed"
-    if [[ "$(docker images -q muvikdev/monitoring:latest 2> /dev/null)" == "" ]]; then
+    echo "-----------------------------------------------------------------------------"
+    echo "Pull image"
+    docker pull muvikdev/monitoring:latest
+    echo "-----------------------------------------------------------------------------"
+    docker run -d -p 5678:5678 --name MONITORING muvikdev/monitoring:latest
+    echo "-----------------------------------------------------------------------------"
+    echo "Start container on 5678 port"
+    if [ "$( docker container inspect -f '{{.State.Running}}' MONITORING )" == "true" ]; then
       echo "-----------------------------------------------------------------------------"
-      echo "Image already exist"
-      if [ "$( docker container inspect -f '{{.State.Running}}' MONITORING )" == "true" ]; then
-        echo "-----------------------------------------------------------------------------"
-        echo "Container already running, adding to autostart"
-        docker update --restart=always MONITORING &>/dev/null
-      else
-        echo "-----------------------------------------------------------------------------"
-        echo "Start container"
-        docker start MONITORING &>/dev/null
-        docker update --restart=always MONITORING &>/dev/null
-      fi
+      echo "Container already running, adding to autostart"
+      docker update --restart=always MONITORING &>/dev/null
     else
-      echo "-----------------------------------------------------------------------------"
-      echo "Image doesn't exist"
-      docker pull muvikdev/monitoring:latest
-      echo "-----------------------------------------------------------------------------"
-      echo "Pull image"
-      docker run -d -p 5678:5678 --name MONITORING muvikdev/monitoring:latest
-      echo "-----------------------------------------------------------------------------"
-      echo "Start container on 5678 port"
-      if [ "$( docker container inspect -f '{{.State.Running}}' MONITORING )" == "true" ]; then
-        echo "-----------------------------------------------------------------------------"
-        echo "Container already running, adding to autostart"
-        docker update --restart=always MONITORING &>/dev/null
-      fi
+      docker start MONITORING &>/dev/null
+      docker update --restart=always MONITORING &>/dev/null
     fi
 else
     echo "Install docker"

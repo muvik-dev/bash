@@ -13,7 +13,6 @@ if [ -x "$(command -v docker)" ]; then
       echo "Container already running, adding to autostart"
       docker update --restart=always MONITORING &>/dev/null
     else
-      docker start MONITORING &>/dev/null
       docker update --restart=always MONITORING &>/dev/null
     fi
 else
